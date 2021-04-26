@@ -1,3 +1,3 @@
 
 all:
-	go build
+	go build -o bin/promhub

@@ -76,7 +76,7 @@ func (b *BandwagonHost) ScheduleRun() {
 	}
 }
 
-func (b *BandwagonHost) Run() {
+func (b BandwagonHost) Run() {
 
 	// Create a Resty Client
 	client := resty.New()

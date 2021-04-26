@@ -13,17 +13,29 @@ import (
 func main() {
 	config := config.GlobalConfig()
 
-	log.Info(config)
+	probers := []prober.Prober{}
 
 	for _, pc := range config.ProberConfigs {
 		t := pc["type"].(string)
+		name := pc["name"].(string)
+		log.Infof("initializing %v prober %v", t, name)
 		switch t {
 		case "bandwagon":
 			bh := prober.BandwagonHost{}
 			bh.LoadFromConfig(pc)
-			go bh.ScheduleRun()
+			probers = append(probers, bh)
 		}
 	}
-	http.Handle("/metrics", promhttp.Handler())
+
+	h := promhttp.Handler()
+	
+	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+		for _, p := range probers {
+			p.Run()
+		}
+		h.ServeHTTP(w, r)
+	})
+
+
 	http.ListenAndServe(":2112", nil)
 }
