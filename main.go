@@ -2,7 +2,9 @@ package main
 
 import (
 	"net/http"
-
+	"flag"
+	
+	
 	"github.com/melvinto/promhub/config"
 	"github.com/melvinto/promhub/prober"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -11,6 +13,11 @@ import (
 )
 
 func main() {
+	configFile := flag.String("c", "config.yml", "config file")
+	flag.Parse()
+	
+	config.SetConfig(*configFile)
+
 	config := config.GlobalConfig()
 
 	probers := []prober.Prober{}

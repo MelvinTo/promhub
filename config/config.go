@@ -14,9 +14,10 @@ type Config struct {
 }
 
 var gConfig *Config = nil
+var configPath = "config.yml"
 
-func DefaultConfigPath() string {
-	return "config.yml"
+func SetConfig(file string) {
+	configPath = file
 }
 
 func GlobalConfig() *Config {
@@ -27,22 +28,17 @@ func GlobalConfig() *Config {
 
 	c := Config{}
 
-	configPath := DefaultConfigPath()
-	if configPath == "" {
-		return &c
-	}
-
 	dat, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
-		log.Println("Failed to load config file, err:", err)
+		log.Fatal("Failed to load config file, err:", err)
 		return &c
 	}
 
 	err = yaml.Unmarshal(dat, &c)
 
 	if err != nil {
-		log.Println("Failed to unmarshal config, err", err)
+		log.Fatal("Failed to unmarshal config, err", err)
 		return &c
 	}
 
